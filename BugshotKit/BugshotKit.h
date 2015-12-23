@@ -10,8 +10,15 @@
 #warning BugshotKit is being included in a non-debug build.
 #endif
 
-extern NSString * const BSKNewLogMessageNotification;
+@protocol BugshotKitSubmissionDelegate
 
+- (void)bugshotKitDidSubmit:(nonnull BSKSubmission *)submission;
+
+@end
+
+NS_ASSUME_NONNULL_BEGIN
+
+extern NSString * const BSKNewLogMessageNotification;
 
 typedef enum : NSUInteger {
     BSKInvocationGestureNone        = 0,
@@ -24,12 +31,6 @@ typedef enum : NSUInteger {
     BSKInvocationGesture_VolumeButton_DoubleTap = (1 << 6),
 } BSKInvocationGestureMask;
 
-@protocol BugshotKitSubmissionDelegate
-
-- (void)bugshotKitDidSubmit:(BSKSubmission *)submission;
-
-@end
-
 @interface BugshotKit : NSObject <UIGestureRecognizerDelegate, BSKMainViewControllerDelegate>
 
 /*
@@ -39,7 +40,7 @@ typedef enum : NSUInteger {
 
 /* You can also always show it manually */
 + (void)show;
-+ (void)dismissAninmated:(BOOL)animated completion:(void(^)())completion;
++ (void)dismissAninmated:(BOOL)animated completion:(nullable void(^)())completion;
 
 + (instancetype)sharedManager;
 - (void)clearLog;
@@ -76,9 +77,9 @@ typedef enum : NSUInteger {
 
 
 // don't mess with these
-@property (nonatomic, strong) UIImage *snapshotImage;
-@property (nonatomic, copy) NSArray *annotations;
-@property (nonatomic, strong) UIImage *annotatedImage;
+@property (nonatomic, strong, nullable) UIImage *snapshotImage;
+@property (nonatomic, copy, nullable) NSArray *annotations;
+@property (nonatomic, strong, nullable) UIImage *annotatedImage;
 
 #pragma mark - Volume Button Options
 
@@ -95,3 +96,5 @@ typedef enum : NSUInteger {
 @end
 
 UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)());
+
+NS_ASSUME_NONNULL_END

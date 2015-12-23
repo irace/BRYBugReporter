@@ -304,32 +304,36 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
     }
 }
 
+- (UIInterfaceOrientation)statusBarOrientation {
+    return [[UIApplication sharedApplication] statusBarOrientation];
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer { return YES; }
 
 - (void)leftEdgePanGesture:(UIScreenEdgePanGestureRecognizer *)egr {
     if ([egr translationInView:self.window].x < 60) return;
-    if (self.window.rootViewController.interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) [self handleOpenGesture:egr];
+    if (self.statusBarOrientation == UIInterfaceOrientationPortraitUpsideDown) [self handleOpenGesture:egr];
 }
 
 - (void)rightEdgePanGesture:(UIScreenEdgePanGestureRecognizer *)egr {
     if ([egr translationInView:self.window].x > -60) return;
-    if (self.window.rootViewController.interfaceOrientation == UIInterfaceOrientationPortrait) [self handleOpenGesture:egr];
+    if (self.statusBarOrientation == UIInterfaceOrientationPortrait) [self handleOpenGesture:egr];
 }
 
 - (void)topEdgePanGesture:(UIScreenEdgePanGestureRecognizer *)egr {
     if ([egr translationInView:self.window].y < 60) return;
-    if (self.window.rootViewController.interfaceOrientation == UIInterfaceOrientationLandscapeLeft) [self handleOpenGesture:egr];
+    if (self.statusBarOrientation == UIInterfaceOrientationLandscapeLeft) [self handleOpenGesture:egr];
 }
 
 - (void)bottomEdgePanGesture:(UIScreenEdgePanGestureRecognizer *)egr {
     if ([egr translationInView:self.window].y > -60) return;
-    if (self.window.rootViewController.interfaceOrientation == UIInterfaceOrientationLandscapeRight) [self handleOpenGesture:egr];
+    if (self.statusBarOrientation == UIInterfaceOrientationLandscapeRight) [self handleOpenGesture:egr];
 }
 
 - (void)handleOpenGesture:(UIGestureRecognizer *)sender {
     if (self.isShowing) return;
 
-    UIInterfaceOrientation interfaceOrientation = self.window.rootViewController.interfaceOrientation;
+    UIInterfaceOrientation interfaceOrientation = self.statusBarOrientation;
     
     if (sender && [sender isKindOfClass:UISwipeGestureRecognizer.class]) {
         UISwipeGestureRecognizer *sgr = (UISwipeGestureRecognizer *)sender;
@@ -386,7 +390,7 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
     
     BSKMainViewController *mvc = [[BSKMainViewController alloc] init];
     mvc.delegate = self;
-    BSKNavigationController *nc = [[BSKNavigationController alloc] initWithRootViewController:mvc lockedToRotation:self.window.rootViewController.interfaceOrientation];
+    BSKNavigationController *nc = [[BSKNavigationController alloc] initWithRootViewController:mvc lockedToRotation:self.statusBarOrientation];
     self.presentedNavigationController = nc;
     nc.navigationBar.tintColor = BugshotKit.sharedManager.annotationFillColor;
     [presentingViewController presentViewController:nc animated:YES completion:NULL];

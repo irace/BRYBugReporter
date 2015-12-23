@@ -115,7 +115,7 @@
 
 - (void)loadView
 {
-    CGRect frame = UIScreen.mainScreen.applicationFrame;
+    CGRect frame = UIScreen.mainScreen.bounds;
     frame.origin = CGPointZero;
     UIView *view = [[UIView alloc] initWithFrame:frame];
     view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;

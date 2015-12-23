@@ -53,6 +53,10 @@ static UIImage *rotateIfNeeded(UIImage *src);
     return UIStatusBarStyleDefault;
 }
 
+- (UIInterfaceOrientation)statusBarOrientation {
+    return [[UIApplication sharedApplication] statusBarOrientation];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -74,9 +78,9 @@ static UIImage *rotateIfNeeded(UIImage *src);
     UIImage *screenshotImage = (BugshotKit.sharedManager.annotatedImage ?: BugshotKit.sharedManager.snapshotImage);
 
     CGFloat maxHeaderHeight =
-        UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? (UIInterfaceOrientationIsPortrait(self.interfaceOrientation) ? 570 : 480) :
-        UIInterfaceOrientationIsPortrait(self.interfaceOrientation) ? (UIScreen.mainScreen.bounds.size.height < 568 ? 300 : 340) : 220
-    ;
+        UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? (UIInterfaceOrientationIsPortrait(self.statusBarOrientation) ? 570 : 480) :
+        UIInterfaceOrientationIsPortrait(self.statusBarOrientation) ? (UIScreen.mainScreen.bounds.size.height < 568 ? 300 : 340) : 220;
+    
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, maxHeaderHeight)];
     
     UIView *screenshotContainer = [UIView new];
@@ -101,7 +105,7 @@ static UIImage *rotateIfNeeded(UIImage *src);
     self.consoleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [consoleContainer addSubview:self.consoleLabel];
     
-    CGFloat toggleWidth = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && UIInterfaceOrientationIsLandscape(self.interfaceOrientation) ? 44 : 74;
+    CGFloat toggleWidth = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone && UIInterfaceOrientationIsLandscape(self.statusBarOrientation) ? 44 : 74;
     
     self.includeScreenshotToggle = [[BSKToggleButton alloc] initWithFrame:CGRectMake(0, 0, toggleWidth, toggleWidth)];
     self.includeScreenshotToggle.on = YES;
