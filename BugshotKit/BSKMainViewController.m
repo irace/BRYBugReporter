@@ -6,6 +6,7 @@
 #import "BugshotKit.h"
 #import "BSKLogViewController.h"
 #import "BSKScreenshotViewController.h"
+#import "BSKSubmission.h"
 #import "BSKToggleButton.h"
 #import <QuartzCore/QuartzCore.h>
 #import <unistd.h>
@@ -262,11 +263,8 @@ static UIImage *rotateIfNeeded(UIImage *src);
     [self.screenshotView setBackgroundImage:(BugshotKit.sharedManager.annotatedImage ?: BugshotKit.sharedManager.snapshotImage) forState:UIControlStateNormal];
 }
 
-- (void)cancelButtonTapped:(id)sender
-{
-    [self.navigationController.presentingViewController dismissViewControllerAnimated:YES completion:^{
-        if (self.delegate) [self.delegate mainViewControllerDidClose:self];
-    }];
+- (void)cancelButtonTapped:(id)sender {
+    [self.delegate mainViewControllerDidClose:self];
 }
 
 - (void)consoleButtonTapped:(id)sender
@@ -286,8 +284,7 @@ static UIImage *rotateIfNeeded(UIImage *src);
     }
 }
 
-- (void)sendButtonTappedWithLog:(NSString *)log
-{
+- (void)sendButtonTappedWithLog:(NSString *)log {
     UIImage *screenshot = self.includeScreenshotToggle.on ? (BugshotKit.sharedManager.annotatedImage ?: BugshotKit.sharedManager.snapshotImage) : nil;
     if (log && ! log.length) log = nil;
     
@@ -301,46 +298,14 @@ static UIImage *rotateIfNeeded(UIImage *src);
     NSString *modelIdentifier = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];
     free(name);
 
-    NSDictionary *userInfo = @{
-        @"appName" : appNameString,
-        @"appVersion" : appVersionString,
-        @"systemVersion" : UIDevice.currentDevice.systemVersion,
-        @"deviceModel" : modelIdentifier,
-    };
-    
-    NSDictionary *extraUserInfo = BugshotKit.sharedManager.extraInfoBlock ? BugshotKit.sharedManager.extraInfoBlock() : nil;
-    if (extraUserInfo) {
-        userInfo = userInfo.mutableCopy;
-        [(NSMutableDictionary *)userInfo addEntriesFromDictionary:extraUserInfo];
-    };
-    
-    NSData *userInfoJSON = [NSJSONSerialization dataWithJSONObject:userInfo options:NSJSONWritingPrettyPrinted error:NULL];
-    
-    MFMailComposeViewController *mf = [MFMailComposeViewController canSendMail] ? [[MFMailComposeViewController alloc] init] : nil;
-    if (! mf) {
-        NSString *msg = [NSString stringWithFormat:@"Mail is not configured on your %@.", UIDevice.currentDevice.localizedModel];
-        [[[UIAlertView alloc] initWithTitle:@"Cannot Send Mail" message:msg delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-        return;
-    }
-    
-    mf.toRecipients = [BugshotKit.sharedManager.destinationEmailAddress componentsSeparatedByString:@","];
-    mf.subject = BugshotKit.sharedManager.emailSubjectBlock ? BugshotKit.sharedManager.emailSubjectBlock(userInfo) : [NSString stringWithFormat:@"%@ %@ Feedback", appNameString, appVersionString];
-    [mf setMessageBody:BugshotKit.sharedManager.emailBodyBlock ? BugshotKit.sharedManager.emailBodyBlock(userInfo) : nil isHTML:NO];
+    BSKSubmission *submission = [[BSKSubmission alloc] initWithAppName:appNameString
+                                                            appVersion:appVersionString
+                                                       modelIdentifier:modelIdentifier
+                                                         systemVersion:UIDevice.currentDevice.systemVersion
+                                                            screenshot:rotateIfNeeded(screenshot)
+                                                                   log:log];
 
-    if (screenshot) [mf addAttachmentData:UIImagePNGRepresentation(rotateIfNeeded(screenshot)) mimeType:@"image/png" fileName:@"screenshot.png"];
-    if (log) [mf addAttachmentData:[log dataUsingEncoding:NSUTF8StringEncoding] mimeType:@"text/plain" fileName:@"log.txt"];
-    if (userInfoJSON) [mf addAttachmentData:userInfoJSON mimeType:@"application/json" fileName:@"info.json"];
-    if(BugshotKit.sharedManager.mailComposeCustomizeBlock) BugshotKit.sharedManager.mailComposeCustomizeBlock(mf);
-    
-    mf.mailComposeDelegate = self;
-    [self presentViewController:mf animated:YES completion:NULL];
-}
-
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
-{
-    [self dismissViewControllerAnimated:YES completion:^{
-        if (result == MFMailComposeResultSaved || result == MFMailComposeResultSent) [self cancelButtonTapped:nil];
-    }];
+    [self.delegate mainViewController:self didSubmit:submission];
 }
 
 #pragma mark - Table junk
@@ -354,7 +319,7 @@ static UIImage *rotateIfNeeded(UIImage *src);
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
     cell.textLabel.textColor = BugshotKit.sharedManager.annotationFillColor;
-    cell.textLabel.text = @"Compose Email…";
+    cell.textLabel.text = @"Submit";
 
     return cell;
 }

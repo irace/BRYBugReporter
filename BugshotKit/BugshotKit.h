@@ -24,14 +24,18 @@ typedef enum : NSUInteger {
     BSKInvocationGesture_VolumeButton_DoubleTap = (1 << 6),
 } BSKInvocationGestureMask;
 
+@protocol BugshotKitSubmissionDelegate
+
+- (void)bugshotKitDidSubmit:(BSKSubmission *)submission;
+
+@end
+
 @interface BugshotKit : NSObject <UIGestureRecognizerDelegate, BSKMainViewControllerDelegate>
 
 /*
     Call this from your UIApplication didFinishLaunching:... method.
-    
-    Optionally, multiple email addresses can be specified, separated by commas in the string.
 */
-+ (void)enableWithNumberOfTouches:(NSUInteger)fingerCount performingGestures:(BSKInvocationGestureMask)invocationGestures feedbackEmailAddress:(NSString *)toEmailAddress;
++ (void)enableWithNumberOfTouches:(NSUInteger)fingerCount performingGestures:(BSKInvocationGestureMask)invocationGestures;
 
 /* You can also always show it manually */
 + (void)show;
@@ -43,44 +47,7 @@ typedef enum : NSUInteger {
 + (void)addLogMessage:(NSString *)message;
 + (UIFont *)consoleFontWithSize:(CGFloat)size;
 
-@property (nonatomic, copy) NSString *destinationEmailAddress;
 @property (nonatomic) NSUInteger consoleLogMaxLines;
-
-/*
-    Every email has an info.json attachment with a serialized dictionary containing at least these keys:
-
-    @{
-        @"appName" : @"Your App",
-        @"appVersion" : @"1.0",
-        @"systemVersion" : @"7.0.4",
-        @"deviceModel" : @"iPhone6,1"
-    }
-
-    To add more keys to get merged into this dictionary, return them from a custom extraInfoBlock:
-*/
-+ (void)setExtraInfoBlock:(NSDictionary *(^)())extraInfoBlock;
-
-
-/*
-    You can optionally customize the email subject line by setting an emailSubjectBlock.
-
-    info is the app-info dictionary from above (including anything you provided with extraInfoBlock)
-*/
-+ (void)setEmailSubjectBlock:(NSString *(^)(NSDictionary *))emailSubjectBlock;
-
-/*
- You can optionally customize the email body by setting an emailBodyBlock.
- 
- info is the app-info dictionary from above (including anything you provided with extraInfoBlock)
- */
-+ (void)setEmailBodyBlock:(NSString *(^)(NSDictionary *))emailBodyBlock;
-
-/*
- You can optionally customize the mail compose view controller by setting an mailComposeCustomizeBlock.
- 
- Use this block e.g. for adding file attachments to the e-mail being sent.
- */
-+ (void)setMailComposeCustomizeBlock:(void (^)(MFMailComposeViewController *mailComposer))mailComposeCustomizeBlock;
 
 /*
  You can display the console log viewer as selectable text. Defaults to NO which presents a screenshot of the log text.
@@ -93,11 +60,13 @@ typedef enum : NSUInteger {
 
 - (void)currentConsoleLogWithDateStamps:(BOOL)dateStamps
                          withCompletion:(void (^)(NSString *result))completion;
+
 - (void)consoleImageWithSize:(CGSize)size
                     fontSize:(CGFloat)fontSize
              emptyBottomLine:(BOOL)emptyBottomLine
               withCompletion:(void (^)(UIImage *result))completion;
 
+@property (nonatomic, weak) id<BugshotKitSubmissionDelegate> submissionDelegate;
 
 @property (nonatomic) BOOL displayConsoleTextInLogViewer;
 @property (nonatomic, strong) UIColor *annotationFillColor;
@@ -110,10 +79,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) UIImage *snapshotImage;
 @property (nonatomic, copy) NSArray *annotations;
 @property (nonatomic, strong) UIImage *annotatedImage;
-@property (nonatomic, copy) NSDictionary *(^extraInfoBlock)();
-@property (nonatomic, copy) void (^mailComposeCustomizeBlock)(MFMailComposeViewController *mailComposer);
-@property (nonatomic, copy) NSString *(^emailSubjectBlock)(NSDictionary *info);
-@property (nonatomic, copy) NSString *(^emailBodyBlock)(NSDictionary *info);
 
 #pragma mark - Volume Button Options
 

@@ -15,7 +15,7 @@ Tapping the screenshot brings up an embedded version of the Bugshot app: draw bo
 
 Tapping the console brings up a full-screen live console, useful in debugging even when you're not submitting a bug report.
 
-Tap the respective green checkmarks to omit the screenshot or log if you'd like, and then simply compose an email with all of the relevant information already filled in and attached.
+Tap the respective green checkmarks to omit the screenshot or log if you'd like. Implement your own bug submission mechanism by conforming to `BugshotSubmissionDelegate` and populating `BugshotKit.sharedManager.submissionDelegate` with your custom implementation.
 
 ## For development and beta tests only!
 
@@ -44,7 +44,7 @@ Simply invoke `[BugshotKit enableWithNumberOfTouches:...]` from your `applicatio
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [BugshotKit enableWithNumberOfTouches:1 performingGestures:BSKInvocationGestureSwipeUp feedbackEmailAddress:@"your@app.biz"];
+    [BugshotKit enableWithNumberOfTouches:1 performingGestures:BSKInvocationGestureSwipeUp];
 }
 ```
 
@@ -60,34 +60,6 @@ If you don't want to use gesture triggers, you can invoke it manually (from a bu
 
 ```obj-c
 [BugshotKit show];
-```
-
-BugshotKit's emails include an `info.json` file containing basic info in JSON:
-
-```json
-{
-  "appName" : "TestBugshotKit",
-  "appVersion" : "1.0",
-  "systemVersion" : "7.1",
-  "deviceModel" : "iPhone6,1"
-}
-```
-
-To add custom keys to this, set a block with `[BugshotKit setExtraInfoBlock:]` that returns an `NSDictionary`, and they'll be merged in.
-
-To customize the email subject, set a block with `[BugshotKit setEmailSubjectBlock:]`. It receives the full dictionary as a parameter, with any keys you added with the extra info block, so you can do something like:
-
-```obj-c
-[BugshotKit setExtraInfoBlock:^NSDictionary *{
-    return @{
-        @"userID" : @(1),
-        @"colorScheme" : @"dark"
-    };
-}];
-
-[BugshotKit setEmailSubjectBlock:^NSString *(NSDictionary *info) {
-    return [NSString stringWithFormat:@"Bug report from version %@, user %@", info[@"appVersion"], info[@"userID"]];
-}];
 ```
 
 ## License

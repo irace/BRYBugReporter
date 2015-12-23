@@ -24,6 +24,8 @@
 		4C15DA6F188F491000767C78 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 4C15DA57188F491000767C78 /* UIImage+ImageEffects.m */; };
 		4C15DA70188F49AB00767C78 /* BugshotKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C15DA38188F48E400767C78 /* BugshotKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4C15DAA2188F563A00767C78 /* BSKWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C15DA54188F491000767C78 /* BSKWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		93A5DC2A1C2AEF4A0010D306 /* BSKSubmission.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A5DC281C2AEF4A0010D306 /* BSKSubmission.h */; };
+		93A5DC2B1C2AEF4A0010D306 /* BSKSubmission.m in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DC291C2AEF4A0010D306 /* BSKSubmission.m */; };
 		A9AF1AA418995AA90025693B /* MABGTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = A9AF1AA218995AA90025693B /* MABGTimer.h */; };
 		A9AF1AA518995AA90025693B /* MABGTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = A9AF1AA318995AA90025693B /* MABGTimer.m */; };
 /* End PBXBuildFile section */
@@ -58,6 +60,8 @@
 		4C15DA55188F491000767C78 /* BSKWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSKWindow.m; sourceTree = "<group>"; };
 		4C15DA56188F491000767C78 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		4C15DA57188F491000767C78 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		93A5DC281C2AEF4A0010D306 /* BSKSubmission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSKSubmission.h; sourceTree = "<group>"; };
+		93A5DC291C2AEF4A0010D306 /* BSKSubmission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSKSubmission.m; sourceTree = "<group>"; };
 		A9AF1AA218995AA90025693B /* MABGTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MABGTimer.h; sourceTree = "<group>"; };
 		A9AF1AA318995AA90025693B /* MABGTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MABGTimer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -122,6 +126,8 @@
 				4C15DA4F188F491000767C78 /* BSKNavigationController.m */,
 				4C15DA50188F491000767C78 /* BSKScreenshotViewController.h */,
 				4C15DA51188F491000767C78 /* BSKScreenshotViewController.m */,
+				93A5DC281C2AEF4A0010D306 /* BSKSubmission.h */,
+				93A5DC291C2AEF4A0010D306 /* BSKSubmission.m */,
 				4C15DA52188F491000767C78 /* BSKToggleButton.h */,
 				4C15DA53188F491000767C78 /* BSKToggleButton.m */,
 				4C15DA54188F491000767C78 /* BSKWindow.h */,
@@ -151,6 +157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C15DA70188F49AB00767C78 /* BugshotKit.h in Headers */,
+				93A5DC2A1C2AEF4A0010D306 /* BSKSubmission.h in Headers */,
 				A9AF1AA418995AA90025693B /* MABGTimer.h in Headers */,
 				4C15DA64188F491000767C78 /* BSKMainViewController.h in Headers */,
 				4C15DAA2188F563A00767C78 /* BSKWindow.h in Headers */,
@@ -185,7 +192,7 @@
 		4C15DA26188F48E300767C78 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Marco Arment";
 			};
 			buildConfigurationList = 4C15DA29188F48E300767C78 /* Build configuration list for PBXProject "BugshotKit" */;
@@ -250,6 +257,7 @@
 				4C15DA5B188F491000767C78 /* BSKAnnotationBlurView.m in Sources */,
 				4C15DA65188F491000767C78 /* BSKMainViewController.m in Sources */,
 				A9AF1AA518995AA90025693B /* MABGTimer.m in Sources */,
+				93A5DC2B1C2AEF4A0010D306 /* BSKSubmission.m in Sources */,
 				4C15DA69188F491000767C78 /* BSKScreenshotViewController.m in Sources */,
 				4C15DA67188F491000767C78 /* BSKNavigationController.m in Sources */,
 				4C15DA3A188F48E400767C78 /* BugshotKit.m in Sources */,
@@ -263,7 +271,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -277,6 +284,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -301,7 +309,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;

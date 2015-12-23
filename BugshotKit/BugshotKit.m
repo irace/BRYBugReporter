@@ -66,7 +66,7 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
     return sharedManager;
 }
 
-+ (void)enableWithNumberOfTouches:(NSUInteger)fingerCount performingGestures:(BSKInvocationGestureMask)invocationGestures feedbackEmailAddress:(NSString *)toEmailAddress {
++ (void)enableWithNumberOfTouches:(NSUInteger)fingerCount performingGestures:(BSKInvocationGestureMask)invocationGestures {
     
     // EARLY RETURN for App Store builds.
     if (BugshotKit.sharedManager.isDisabled) {
@@ -75,7 +75,6 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
     
     BugshotKit.sharedManager.invocationGestures = invocationGestures;
     BugshotKit.sharedManager.invocationGesturesTouchCount = fingerCount;
-    BugshotKit.sharedManager.destinationEmailAddress = toEmailAddress;
     
     // dispatched to next main-thread loop so the app delegate has a chance to set up its window
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -93,22 +92,6 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
 + (void)show {
     [BugshotKit.sharedManager ensureWindow];
     [BugshotKit.sharedManager handleOpenGesture:nil];
-}
-
-+ (void)setExtraInfoBlock:(NSDictionary *(^)())extraInfoBlock {
-    BugshotKit.sharedManager.extraInfoBlock = extraInfoBlock;
-}
-
-+ (void)setEmailSubjectBlock:(NSString *(^)(NSDictionary *))emailSubjectBlock {
-    BugshotKit.sharedManager.emailSubjectBlock = emailSubjectBlock;
-}
-
-+ (void)setEmailBodyBlock:(NSString *(^)(NSDictionary *))emailBodyBlock; {
-    BugshotKit.sharedManager.emailBodyBlock = emailBodyBlock;
-}
-
-+ (void)setMailComposeCustomizeBlock:(void (^)(MFMailComposeViewController *mailComposer))mailComposeCustomizeBlock {
-    BugshotKit.sharedManager.mailComposeCustomizeBlock = mailComposeCustomizeBlock;
 }
 
 + (void)setDisplayConsoleTextInLogViewer:(BOOL)displayText {
@@ -419,11 +402,27 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
     }
 }
 
+#pragma mark - BSKMainViewControllerDelegate
+
+- (void)mainViewController:(BSKMainViewController *)mainViewController didSubmit:(BSKSubmission *)submission {
+    [self.submissionDelegate bugshotKitDidSubmit:submission];
+    
+    [self finish];
+}
+
 - (void)mainViewControllerDidClose:(BSKMainViewController *)mainViewController {
-    self.isShowing = NO;
-    self.snapshotImage = nil;
-    self.annotatedImage = nil;
-    self.annotations = nil;
+    [self finish];
+}
+
+#pragma mark - Convenience
+
+- (void)finish {
+    [self.presentedNavigationController dismissViewControllerAnimated:YES completion:^{
+        self.isShowing = NO;
+        self.snapshotImage = nil;
+        self.annotatedImage = nil;
+        self.annotations = nil;
+    }];
 }
 
 #pragma mark - Console logging
