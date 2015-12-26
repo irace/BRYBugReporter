@@ -332,6 +332,7 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
 
 - (void)handleOpenGesture:(UIGestureRecognizer *)sender {
     if (self.isShowing) return;
+    if (self.delegate && ![self.delegate bugshotKitShouldPresent]) return;
 
     UIInterfaceOrientation interfaceOrientation = self.statusBarOrientation;
     
@@ -409,24 +410,25 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
 #pragma mark - BSKMainViewControllerDelegate
 
 - (void)mainViewController:(BSKMainViewController *)mainViewController didSubmit:(BSKSubmission *)submission {
-    [self.submissionDelegate bugshotKitDidSubmit:submission];
-    
-    [self finish];
+    [self.presentedNavigationController dismissViewControllerAnimated:YES completion:^{
+        [self.delegate bugshotKitDidSubmit:submission];
+    }];
 }
 
 - (void)mainViewControllerDidClose:(BSKMainViewController *)mainViewController {
-    [self finish];
+    [self.presentedNavigationController dismissViewControllerAnimated:YES completion:^{
+        [self clear];
+    }];
 }
 
 #pragma mark - Convenience
 
-- (void)finish {
-    [self.presentedNavigationController dismissViewControllerAnimated:YES completion:^{
-        self.isShowing = NO;
-        self.snapshotImage = nil;
-        self.annotatedImage = nil;
-        self.annotations = nil;
-    }];
+- (void)clear {
+
+    self.isShowing = NO;
+    self.snapshotImage = nil;
+    self.annotatedImage = nil;
+    self.annotations = nil;
 }
 
 #pragma mark - Console logging

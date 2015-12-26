@@ -10,7 +10,9 @@
 #warning BugshotKit is being included in a non-debug build.
 #endif
 
-@protocol BugshotKitSubmissionDelegate
+@protocol BugshotKitDelegate
+
+- (BOOL)bugshotKitShouldPresent;
 
 - (void)bugshotKitDidSubmit:(nonnull BSKSubmission *)submission;
 
@@ -67,7 +69,7 @@ typedef enum : NSUInteger {
              emptyBottomLine:(BOOL)emptyBottomLine
               withCompletion:(void (^)(UIImage *result))completion;
 
-@property (nonatomic, weak) id<BugshotKitSubmissionDelegate> submissionDelegate;
+@property (nonatomic, weak) id<BugshotKitDelegate> delegate;
 
 @property (nonatomic) BOOL displayConsoleTextInLogViewer;
 @property (nonatomic, strong) UIColor *annotationFillColor;
