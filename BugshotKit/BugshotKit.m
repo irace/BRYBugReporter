@@ -412,6 +412,8 @@ UIImage *BSKImageWithDrawing(CGSize size, void (^drawingCommands)())
 - (void)mainViewController:(BSKMainViewController *)mainViewController didSubmit:(BSKSubmission *)submission {
     [self.presentedNavigationController dismissViewControllerAnimated:YES completion:^{
         [self.delegate bugshotKitDidSubmit:submission];
+        
+        [self clear];
     }];
 }
 
